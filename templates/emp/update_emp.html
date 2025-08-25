@@ -40,7 +40,7 @@
                         <form onsubmit="return validateForm()" action="{% url 'update_emp' %}" method="POST">
                             {% csrf_token %}
 
-                            <!-- Employee ID -->
+                            <!-- Employee CODE -->
                             <div class="mb-3">
                                 <label class="form-label">Employee Code</label>
                                 <input type="text" class="form-control" id="emp_code" name="emp_code"
@@ -204,3 +204,4 @@
 
 </body>
 </html>
+
