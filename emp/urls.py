@@ -14,14 +14,15 @@ urlpatterns = [
     path("login/", views.login_user, name="login"),
     path("logout/", views.logout_user, name="logout"),
 
-    # ✅ Password reset flow
+   
     path('reset-password/', CustomPasswordResetView.as_view(), name='password_reset'),
     path("password_reset/done/", auth_views.PasswordResetDoneView.as_view(template_name="emp/password_reset_done.html"), name="password_reset_done"),
     path("reset/<uidb64>/<token>/", auth_views.PasswordResetConfirmView.as_view(template_name="emp/password_reset_confirm.html"), name="password_reset_confirm"),
     path("reset/done/", auth_views.PasswordResetCompleteView.as_view(template_name="emp/password_reset_complete.html"), name="password_reset_complete"),
 
-    # ✅ Support tickets
+   
     path("help_support/", views.help_support, name="help_support"),
     path("guest-help-support/", views.guest_help_support, name="guest_help_support"),
 ]
+
 
