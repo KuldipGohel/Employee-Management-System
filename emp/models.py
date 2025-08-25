@@ -14,9 +14,9 @@ class Profile(models.Model):
 
 
 class Emp(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, unique=True)  # <--- Only one Emp per user
+    user = models.OneToOneField(User, on_delete=models.CASCADE, unique=True)  
     emp_id = models.AutoField(primary_key=True)
-    emp_code = models.CharField(max_length=10, unique=True, editable=False, null=True, blank=True) # Format: EMP001, EMP002, etc.
+    emp_code = models.CharField(max_length=10, unique=True, editable=False, null=True, blank=True)
     f_name = models.CharField(max_length=100)
     l_name = models.CharField(max_length=100)
     gender = models.CharField(max_length=10)
@@ -49,7 +49,7 @@ class Emp(models.Model):
 
 
 class SupportTicket(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)  # Always required now
+    user = models.ForeignKey(User, on_delete=models.CASCADE) 
     subject = models.CharField(max_length=200)
     message = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
@@ -68,3 +68,4 @@ class GuestSupportTicket(models.Model):
 
     def __str__(self):
         return f"{self.subject} - {self.email}"
+
