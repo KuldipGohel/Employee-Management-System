@@ -109,14 +109,14 @@ def add_emp(request):
 
 @login_required(login_url='/emp/login/')
 def view_emp(request):
-    emps = Emp.objects.all()  # Show all employees to everyone
+    emps = Emp.objects.all()  # Show all employees to everyone(Not Guests)
     return render(request, 'emp/view_emp.html', {'emps': emps})
 
 
 @login_required(login_url='/emp/login/')
 def update_emp(request):
     try:
-        # ✅ Only fetch logged-in user's own details
+        # Only fetch logged-in user's own details
         emp = Emp.objects.get(user=request.user)
     except Emp.DoesNotExist:
         messages.warning(request, "You have not added your employee details yet.")
@@ -137,7 +137,7 @@ def update_emp(request):
             emp.department = request.POST.get("department")
             emp.designation = request.POST.get("designation")
 
-            # ✅ Prevent duplicate email for other employees
+            # Prevent duplicate email for other employees
             if Emp.objects.exclude(pk=emp.pk).filter(email=emp.email).exists():
                 messages.error(request, "Email already exists. Please use a different one.")
                 return redirect("/emp/update-emp/")
@@ -151,7 +151,7 @@ def update_emp(request):
 
 
 def delete_emp(request, emp_id):
-    emp = get_object_or_404(Emp, pk=emp_id, user=request.user)  # ✅ Only delete if it's their own record
+    emp = get_object_or_404(Emp, pk=emp_id, user=request.user)
     emp.delete()
     messages.success(request, "Employee deleted successfully.")
     return redirect("/emp/view-emp/")
@@ -173,7 +173,7 @@ def register_user(request):
         password1 = request.POST.get('password1')
         password2 = request.POST.get('password2')
 
-        # ✅ Check password match
+        # Check password match
         if password1 != password2:
             messages.error(request, "Passwords do not match")
             return redirect('/emp/register/')
@@ -183,7 +183,7 @@ def register_user(request):
             messages.error(request, "Email already registered")
             return redirect('/emp/register/')
 
-        # ✅ Validate password with Django’s built-in + custom validators
+        # Validate password with Django’s built-in + custom validators
         try:
             validate_password(password1)
         except ValidationError as e:
@@ -191,7 +191,7 @@ def register_user(request):
                 messages.error(request, error)
             return redirect('/emp/register/')
 
-        # ✅ Create user
+        # Create user
         user = User.objects.create_user(
             username=email,
             email=email,
@@ -199,7 +199,7 @@ def register_user(request):
             is_active=True  # User is active, approval is handled via Profile
         )
 
-        # ✅ Ensure Profile is created
+        # Ensure Profile is created
         profile, created = Profile.objects.get_or_create(user=user)
         if not created:
             profile.is_approved = False
@@ -254,6 +254,8 @@ def logout_user(request):
     return redirect('/emp/login/')
 
 
+# ================== Support Ticket ==================
+
 def help_support(request):
     if request.method == "POST":
         form = SupportTicketForm(request.POST)
@@ -282,3 +284,4 @@ def guest_help_support(request):
 
     return render(request, "emp/guest_help_support.html", {"form": form})
     
+
