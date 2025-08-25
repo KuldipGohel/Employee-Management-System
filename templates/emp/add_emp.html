@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Add Employee</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+    <script>
+        function validateForm() {
+            // ID validation
+            const empId = document.getElementById("emp_id")?.value;
+            if (empId && !/^\d+$/.test(empId)) {
+                alert("Employee ID only contain numbers");
+                return false;
+            }
+
+            // Phone validation
+            const phone = document.getElementById("phone").value;
+            if (!/^\d{10}$/.test(phone)) {
+                alert("Phone number must be 10 digits");
+                return false;
+            }
+
+            // Email validation
+            const email = document.getElementById("email").value;
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                alert("Please enter a valid email address");
+                return false;
+            }
+            return true;
+        }
+    </script>
+</head>
+
+<body style="background-color: black;" class="text-white">
+    {% include 'emp/navbar.html' %}
+    <h1 class="text-center my-3">Add New Employee</h1>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 offset-md-3">
+                <div class="card bg-secondary text-white">
+                    <div class="card-body">
+                        <form onsubmit="return validateForm()" action="/emp/add-emp/" method="POST">
+                            {% csrf_token %}
+
+                            <div class="mb-3">
+                                <label for="fname" class="form-label">Employee First Name</label>
+                                <input type="text" class="form-control" id="fname" name="f_name"
+                                    placeholder="Enter employee name" required />
+                            </div>
+                            <div class="mb-3">
+                                <label for="lname" class="form-label">Employee Last Name</label>
+                                <input type="text" class="form-control" id="lname" name="l_name"
+                                    placeholder="Enter employee name" required />
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label d-block">Gender</label>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="gender" id="male"
+                                        value="Male" required />
+                                    <label class="form-check-label" for="male">Male</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="gender" id="female"
+                                        value="Female" required />
+                                    <label class="form-check-label" for="female">Female</label>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="phone" class="form-label">Phone Number</label>
+                                <input type="tel" class="form-control" id="phone" name="phone"
+                                    placeholder="Enter phone number" required />
+                            </div>
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Email Address</label>
+                                <input type="email" class="form-control" id="email" name="email"
+                                    placeholder="Enter email address" required />
+                            </div>
+                            <div class="mb-3">
+                                <label for="address" class="form-label">Address</label>
+                                <textarea class="form-control" id="address" name="address" rows="3"
+                                    placeholder="Enter address" required></textarea>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="department" class="form-label">Department</label>
+                                <select class="form-select" id="department" name="department" required>
+                                    <option value="" selected disabled>Select Department</option>
+                                    <option value="Human Resources">Human Resources</option>
+                                    <option value="Information Technology">Information Technology</option>
+                                    <option value="Design and Creative">Design and Creative</option>
+                                    <option value="Interns">Interns</option>
+                                    <option value="Administration">Administration</option>
+                                    <option value="Customer Support">Customer Support</option>
+                                    <option value="Sales and Marketing">Sales and Marketing</option>
+                                    <option value="Management">Management</option>
+                                    <option value="Finance">Finance</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="designation" class="form-label">Designation</label>
+                                <select class="form-select" id="designation" name="designation" required>
+                                    <option value="" selected disabled>Select Designation</option>
+                                </select>
+                            </div>
+
+                            <script>
+                                const designationsByDept = {
+                                    "Human Resources": ["HR Executive", "HR Manager", "HR Assistant", "Recruitment Specialist", "Training Coordinator"],
+                                    "Information Technology": ["Software Developer", "Backend Developer", "Frontend Developer", "Full Stack Developer", "DevOps Engineer", "QA Tester", "System Administrator", "IT Support Engineer"],
+                                    "Sales and Marketing": ["Sales Executive", "Sales Manager", "Marketing Executive", "Digital Marketing Specialist", "SEO Specialist", "Business Development Executive"],
+                                    "Finance": ["Accountant", "Senior Accountant", "Finance Manager", "Billing Executive", "Payroll Executive"],
+                                    "Operations": ["Operations Executive", "Operations Manager", "Logistics Coordinator", "Supply Chain Manager"],
+                                    "Customer Support": ["Customer Support Executive", "Call Center Agent", "Technical Support Executive", "Customer Relationship Manager"],
+                                    "Administration": ["Admin Executive", "Office Manager", "Receptionist", "Clerk"],
+                                    "Design and Creative": ["UI/UX Designer", "Graphic Designer", "Creative Director", "Product Designer"],
+                                    "Management": ["Team Lead", "Project Manager", "Product Manager", "General Manager", "CEO", "COO", "CTO"],
+                                    "Interns": ["HR Intern", "Developer Intern", "Marketing Intern", "Finance Intern", "Admin Intern"],
+                                };
+
+                                const deptSelect = document.getElementById("department");
+                                const desigSelect = document.getElementById("designation");
+
+                                function populateDesignations(selectedDept, selectedDesig = null) {
+                                    desigSelect.innerHTML = '<option value="" selected disabled>Select Designation</option>';
+                                    if (!selectedDept || !designationsByDept[selectedDept]) return;
+
+                                    designationsByDept[selectedDept].forEach((desig) => {
+                                        const opt = document.createElement("option");
+                                        opt.value = desig;
+                                        opt.textContent = desig;
+                                        if (selectedDesig && desig === selectedDesig) opt.selected = true;
+                                        desigSelect.appendChild(opt);
+                                    });
+                                }
+
+                                deptSelect.addEventListener("change", (e) => {
+                                    populateDesignations(e.target.value);
+                                });
+                            </script>
+
+                            <div class="mb-3">
+                                <label for="joining_date" class="form-label">Joining Date</label>
+                                <input type="text" class="form-control" id="joining_date" name="joining_date"
+                                    placeholder="Select or enter date" required />
+                                <div class="form-text" style="color: yellowgreen;">Example: YYYY-MM-DD or select from calendar</div>
+                            </div>
+
+                            <div class="text-center">
+                                <button type="submit" class="btn btn-primary px-5">Submit</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            flatpickr("#joining_date", { dateFormat: "Y-m-d", allowInput: true });
+        });
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
